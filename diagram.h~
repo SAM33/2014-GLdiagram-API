@@ -42,12 +42,14 @@ class singlediagram
 		y = Y;
 		width = Width;
 		height = Height;
+		std::cout<<"x="<<x<<",y="<<y<<",W="<<width<<",H="<<height<<std::endl;
 	}
 
 	void setvaluerange(float Minvalue, float Maxvalue)
 	{
 		maxvalue = Maxvalue;
 		minvalue = Minvalue;
+		std::cout<<"max="<<maxvalue<<",min="<<minvalue<<std::endl;
 	}
 
 	void setdatacolor(color3f Color)
@@ -121,6 +123,7 @@ class singlediagram
 
 		float r = (value-minvalue)/(maxvalue-minvalue);
 		float ans =  y+(height)*r;
+		std::cout<<"y="<<ans<<std::endl;
 		return ans;
 	}
 	float itemnum2pointx(int itemnum)
@@ -129,6 +132,7 @@ class singlediagram
 			return 0;
 		float d = ((float)width/(float)(display_itemamount-1))*(float)itemnum;
 		float ans = x+d;
+		std::cout<<"x="<<ans<<std::endl;
 		return ans;
 	}
 
