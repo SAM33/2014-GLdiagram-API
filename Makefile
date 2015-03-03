@@ -2,8 +2,8 @@ CXX=g++
 
 INCFLAGS=-I.
 LIBFLAGS=-L.
-
-CXXFLAGS=-lm -m64 -msse4.2 $(DEF)
+CXXFLAGS=-lm -msse4.2 $(DEF)
+#CXXFLAGS=-lm -m64 -msse4.2 $(DEF)
 LDFLAGS=$(LIBFLAGS) -lm -lGL -lGLU -lglut -lpthread
 
 DEF=
