@@ -1,4 +1,4 @@
-//NTCU TSCC TEAM , 2015.03#ifndef POINT2F_H
+//NTCU TSCC TEAM , 2015.03
 #ifndef  POINT2F_H
 #define POINT2F_H
 class point2f
@@ -11,16 +11,19 @@ class point2f
 		x = 0;
 		y = 0;
 	}
-	point2f(float X, float Y)
+
+	point2f(const float X,const  float Y)
+		: x(X) , y(Y)
 	{
-		assign(X, Y);
 	}
-	void assign(point2f newpoint2f)
+
+	void assign(const point2f& newpoint2f)
 	{
 		x = newpoint2f.x;
 		y = newpoint2f.y;
 	}
-	void assign(float X, float Y)
+
+	void assign(const float X, const float Y)
 	{
 		x = X;
 		y = Y;

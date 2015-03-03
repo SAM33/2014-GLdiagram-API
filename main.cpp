@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <semaphore.h>
 #include <vector>
+#include <cstdio>
 /*  diagrams dataptr  */
 std::vector<singlediagram *> diagrams;
 /* mutex */
@@ -32,52 +33,48 @@ static void Draw()
     pthread_mutex_unlock(&mutex);
 }
 /*  critical sectiong of comuuter1 input  */
-void *computer1(void * Diagram)
+void *computer(void * Diagram)
 {
 	singlediagram *diagram = (singlediagram*)Diagram;
+	int i = 0;
 	while(true)
 	{
         /*  temp ....  random data  */
         pthread_mutex_lock(&mutex);
-		diagram->addvalue(rand()%100);
+		i++;
+		printf("%d\n",i);
+		diagram->addvalue(i);
 		pthread_mutex_unlock(&mutex);
 		usleep(50000);
 	}
 }
-/*  critical sectiong of comuuter2 input  */
-void *computer2(void * Diagram)
+
+singlediagram* diagIniter(int x,int y)
 {
-    singlediagram *diagram = (singlediagram*)Diagram;
-	while(true)
-	{
-        /*  temp ....  random data  */
-        pthread_mutex_lock(&mutex);
-		diagram->addvalue(rand()%100);
-		pthread_mutex_unlock(&mutex);
-		usleep(100000);
-	}
+    singlediagram *diagramptr;   //diagram.h
+	diagramptr = new singlediagram(x,y,400,150); //x=50 y=50 width=400 height=150
+	diagramptr->setdatacolor(color3f(RED));
+	diagramptr->setaxiscolor(color3f(WHITE));
+	diagramptr->setdisplayscope(60);
+	return diagramptr;
 }
 /*  main function  */
 int main(int argc, char** argv)
 {
-	pthread_t datareceiver1,datareceiver2;
+	pthread_t datareceiver[2];
+	pthread_mutex_init(&mutex, NULL);
+
     singlediagram *diagramptr;   //diagram.h
     int r;
     /*  create first diagram  */
-    diagramptr = new singlediagram(50,50,400,150); //x=50 y=50 width=400 height=150
-	diagramptr->setdatacolor(color3f(RED));
-	diagramptr->setaxiscolor(color3f(WHITE));
-	diagramptr->setdisplayscope(10);
-	pthread_mutex_init(&mutex, NULL);
-	r =  pthread_create(&datareceiver1, NULL, computer1, (void *)diagramptr);
+    diagramptr = diagIniter(50,50);
+	r = pthread_create(&datareceiver[0], NULL, computer, (void *)diagramptr);
 	diagrams.push_back(diagramptr);
      /*  create second diagram  */
-    diagramptr = new singlediagram(50,300,400,150);  //x=50 y=400 width=400 height=150
-	diagramptr->setdatacolor(color3f(BLUE));
-	diagramptr->setaxiscolor(color3f(WHITE));
-	diagramptr->setdisplayscope(20);
-	r =  pthread_create(&datareceiver2, NULL, computer2, (void *)diagramptr);
+    diagramptr = diagIniter(50,300);
+	r = pthread_create(&datareceiver[1], NULL, computer, (void *)diagramptr);
 	diagrams.push_back(diagramptr);
+
     /*  init opengl (glu,glut...)  */
     glutInit(&argc, argv);
     glutInitWindowPosition(10,10);

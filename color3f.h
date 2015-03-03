@@ -14,19 +14,19 @@ class color3f
 	float r;
 	float g;
 	float b;
-	void assign(float R, float G, float B)
+	void assign(const float R, const float G, const float B)
 	{
 		r = R;
 		g = G;
 		b = B;
 	}
-	void assign(color3f color)
+	void assign(const color3f& color)
 	{
 		r = color.r;
 		g = color.g;
 		b = color.b;
 	}
-	void assign(int color)
+	void assign(const int color)
 	{
 		switch(color)
 		{
@@ -68,8 +68,8 @@ class color3f
 	}
 
 	color3f(float R, float G, float B)
+		: r(R) , g(G) , b(B)
 	{
-		assign(R, G, B);
 	}
 	color3f(int color)
 	{

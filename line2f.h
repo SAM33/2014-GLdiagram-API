@@ -8,15 +8,15 @@ class line2f
 	public:
 	point2f start;
 	point2f end;
-	line2f(point2f START, point2f END)
+	line2f(const point2f& START, const point2f& END)
+		: start(START) , end(END)
 	{
-		start.assign(START);
-		end.assign(END);
 	}
-	line2f(float X1, float Y1, float X2, float Y2)
+
+	line2f(const float X1, const float Y1, const float X2, const float Y2)
 	{
-		start.assign(X1,Y1);
-		end.assign(X2,Y2);
+		start = point2f(X1,Y1);
+		end = point2f(X2,Y2);
 	}
 };
 #endif

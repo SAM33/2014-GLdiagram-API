@@ -38,7 +38,7 @@ class singlediagram
 	{
 		setbound(X, Y, Width, Height);
 		setvaluerange(0,100);
-		setdisplayscope(10);
+		setdisplayscope(100);
 	}
 
 	void setbound(int X, int Y, int Width, int Height)
@@ -99,21 +99,21 @@ class singlediagram
 
 	void draw1()
 	{
-        MyGLgraphic::setcolor(datacolor);
-        MyGLgraphic::drawpolygon(points);
-        MyGLgraphic::setcolor(axiscolor);
-        MyGLgraphic::drawline(x,y,x+width,y);
-        MyGLgraphic::drawline(x,y,x,y+height);
+        setcolor(datacolor);
+        drawpolygon(points);
+        setcolor(axiscolor);
+        drawline(x,y,x+width,y);
+        drawline(x,y,x,y+height);
 	}
 
 	void draw2()
 	{
         float x_shift = (points.at(display_startitem).x - x);
-        MyGLgraphic::setcolor(datacolor);
-        MyGLgraphic::drawpolygon(points, -1*x_shift, display_startitem, display_itemamount);
-        MyGLgraphic::setcolor(axiscolor);
-        MyGLgraphic::drawline(x,y,x+width,y);
-        MyGLgraphic::drawline(x,y,x,y+height);
+        setcolor(datacolor);
+        drawpolygon(points, -1*x_shift, display_startitem, display_itemamount);
+        setcolor(axiscolor);
+        drawline(x,y,x+width,y);
+        drawline(x,y,x,y+height);
 	}
 
 	private:
