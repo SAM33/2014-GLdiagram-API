@@ -11,6 +11,8 @@ singlediagram *diagramptr＝new singlediagram(x,y,w,h);
 	將x軸,y軸設為白色
 	diagramptr->setdisplayscope(60);
 	將x軸能顯示的料數目設為60
+	diagramptr->settitle("mydiagram");
+	將圖表名稱設為"mydiagram" (ASCII only)
 	
 diagrams.push_back(diagramptr);
 將diagramptr加入繪圖排程
