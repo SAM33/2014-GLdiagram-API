@@ -2,6 +2,7 @@
 用法：
 singlediagram *diagramptr＝new singlediagram(x,y,w,h);
 於座標x,y建立一張寬度w,長度h的圖表
+
 	diagramptr->setvaluerange(0,200);
 	圖表的值的顯示範圍(y軸),最小為0,最大為200
 	diagramptr->setdatacolor(color3f(RED));
