@@ -4,6 +4,7 @@
 #include "MyGLgraphic.h"
 #include "color3f.h"
 #include "diagram.h"
+#include "label.h"
 #include <iostream>
 #include <GL/freeglut.h>
 #include <GL/gl.h>
@@ -25,27 +26,29 @@ static void Repaint()
 /*  opengl critical sectiong  */
 static void Draw()
 {
-    pthread_mutex_lock(&mutex);
     glClear(GL_COLOR_BUFFER_BIT);
-	for(int i=0 ; i<diagrams.size() ; i++)
+
+    pthread_mutex_lock(&mutex);
+    for(int i=0 ; i<diagrams.size() ; i++)
         diagrams.at(i)->draw();
-    glutSwapBuffers();
     pthread_mutex_unlock(&mutex);
+
+    glutSwapBuffers();
+
 }
 /*  critical sectiong of comuuter1 input  */
 void *computer(void * Diagram)
 {
 	singlediagram *diagram = (singlediagram*)Diagram;
-	int i = 0;
 	while(true)
 	{
+	int r = rand()%100;
         /*  temp ....  random data  */
         pthread_mutex_lock(&mutex);
-		i++;
-		printf("%d\n",i);
-		diagram->addvalue(i);
+		printf("%d\n",r);
+		diagram->addvalue(r);
 		pthread_mutex_unlock(&mutex);
-		usleep(50000);
+		usleep(500000);
 	}
 }
 
@@ -53,10 +56,10 @@ singlediagram* diagIniter(int x,int y)
 {
     singlediagram *diagramptr;   //diagram.h
 	diagramptr = new singlediagram(x,y,400,150); //x=50 y=50 width=400 height=150
-	diagramptr->setvaluerange(0,200);
+	diagramptr->setvaluerange(0,100);
 	diagramptr->setdatacolor(color3f(RED));
 	diagramptr->setaxiscolor(color3f(WHITE));
-	diagramptr->setdisplayscope(60);
+	diagramptr->setdisplayscope(50);
 	return diagramptr;
 }
 /*  main function  */
@@ -69,12 +72,15 @@ int main(int argc, char** argv)
     int r;
     /*  create first diagram  */
     diagramptr = diagIniter(50,50);
+    diagramptr->settitle("computer1");
 	r = pthread_create(&datareceiver[0], NULL, computer, (void *)diagramptr);
 	diagrams.push_back(diagramptr);
      /*  create second diagram  */
     diagramptr = diagIniter(50,300);
+    diagramptr->settitle("computer2");
 	r = pthread_create(&datareceiver[1], NULL, computer, (void *)diagramptr);
 	diagrams.push_back(diagramptr);
+
 
     /*  init opengl (glu,glut...)  */
     glutInit(&argc, argv);

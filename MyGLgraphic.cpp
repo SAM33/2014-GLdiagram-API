@@ -92,3 +92,10 @@ void drawpolygon(const std::vector<point2f>& points)
 		drawline(startp, endp);
 	}
 }
+
+void drawtext(const point2f locate, char *text)
+{
+
+
+
+}
