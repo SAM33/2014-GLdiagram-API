@@ -14,6 +14,28 @@
 #include <semaphore.h>
 #include <vector>
 #include <cstdio>
+
+#include <iostream>
+#include <sstream>
+#include <vector>
+#include <string>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/types.h> 
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <pthread.h>
+#include "infoReceiver.h"
+
+void error(const char *msg)
+{
+	perror(msg);
+	exit(1);
+}
+
+
 /*  diagrams dataptr  */
 std::vector<singlediagram *> diagrams;
 /* mutex */
@@ -52,6 +74,75 @@ void *computer(void * Diagram)
 	}
 }
 
+void* run(void* Diagram)
+{
+	singlediagram *diagram = (singlediagram*)Diagram;
+
+	int sockfd, newsockfd, portno;
+	printf("set port:%d\n",diagram->port);
+	portno = diagram->port;
+	socklen_t clilen;
+	char buffer[256];
+	struct sockaddr_in serv_addr, cli_addr;
+
+	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	if (sockfd < 0) 
+		error("ERROR opening socket");
+	bzero((char *) &serv_addr, sizeof(serv_addr));
+	serv_addr.sin_family = AF_INET;
+	serv_addr.sin_addr.s_addr = INADDR_ANY;
+	serv_addr.sin_port = htons(portno);
+	clilen = sizeof(cli_addr);
+
+
+	puts("binding");
+	if (bind(sockfd, (struct sockaddr *) &serv_addr,
+				sizeof(serv_addr)) < 0) 
+		error("ERROR on binding");
+
+	puts("listening");
+	listen(sockfd,5);
+
+	newsockfd = accept(sockfd, 
+			(struct sockaddr *) &cli_addr, 
+			&clilen);
+	if (newsockfd < 0) 
+		error("ERROR on accept");
+
+	int n;
+	deque<string> data;
+	int chosen = portno-3997;
+	int maxSize = 100;
+
+	infoReceiver r;
+	r.registerItem( &data , chosen , maxSize );
+	while( 1 ) 
+	{
+        pthread_mutex_lock(&mutex);
+
+		bzero(buffer,256);
+		n = read(newsockfd,buffer,255);
+		if (n < 0) error("ERROR reading from socket");
+		string tmp( buffer , buffer+n );
+		r.updateInfo(tmp);
+		r.sync();
+		for( int i = 0 ; i < data.size() ; ++i )
+			printf("data[%d]=%s\n" , i , data[i].c_str() );
+		diagram->updateValues(data,maxSize);
+
+		pthread_mutex_unlock(&mutex);
+
+		usleep(500000);
+	}
+
+	close(newsockfd);
+	close(sockfd);
+
+	pthread_exit(NULL);
+	return NULL;
+}
+
+
 singlediagram* diagIniter(int x,int y)
 {
     singlediagram *diagramptr;   //diagram.h
@@ -73,13 +164,15 @@ int main(int argc, char** argv)
     /*  create first diagram  */
     diagramptr = diagIniter(50,50);
     diagramptr->settitle("computer1");
-	r = pthread_create(&datareceiver[0], NULL, computer, (void *)diagramptr);
+	diagramptr->port=4000;
+	r = pthread_create(&datareceiver[0], NULL, run, (void *)diagramptr);
 	diagrams.push_back(diagramptr);
      /*  create second diagram  */
-    diagramptr = diagIniter(50,300);
-    diagramptr->settitle("computer2");
-	r = pthread_create(&datareceiver[1], NULL, computer, (void *)diagramptr);
-	diagrams.push_back(diagramptr);
+    //diagramptr = diagIniter(50,300);
+    //diagramptr->settitle("computer2");
+	//diagramptr->port=4001;
+	//r = pthread_create(&datareceiver[1], NULL, run, (void *)diagramptr);
+	//diagrams.push_back(diagramptr);
 
 
     /*  init opengl (glu,glut...)  */

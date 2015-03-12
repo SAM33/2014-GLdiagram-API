@@ -6,10 +6,12 @@
 #include "MyGLgraphic.h"
 #include "color3f.h"
 #include "label.h"
+#include <limits.h>
 #include <vector>
 #include <iostream>
 #include <string.h>
 #include <stdio.h>
+#include "infoReceiver.h"
 class singlediagram
 {
 	public:
@@ -23,6 +25,7 @@ class singlediagram
 	int y;                                  //location-y of singlediagram (base on x-axis,y-axis cross point)
 	int display_itemamount; //how many items in values should display on this singlediagram
 	int display_startitem;      //which value is the first item display on left of singlediagram
+	int port;
 	color3f axiscolor;
 	color3f datacolor;
 	const static int display_amounty = 10;
@@ -93,6 +96,37 @@ class singlediagram
 	{
 		for(int i=0 ; i<size ; i++)
 			addvalue(values[i]);
+	}
+
+	void updateValues(deque<string> &data,int maxSize)
+	{
+		int max = INT_MIN;
+		int min = INT_MAX;
+
+		for( auto s : data )
+		{
+			printf("A do stoi(%s)\n",s.c_str());
+			int val;
+			try { val = stoi(s); }
+			catch(...) { return; }
+			if( max < val ) max = val;
+			if( min > val ) min = val;
+		}
+
+		int d = (max - min) / 100; // for yAxis
+
+		points.clear();
+
+		for( int i = 0 ; i < data.size() ; ++i )
+		{
+			int val = stoi(data[i]);
+			int itemX = x + (width*i)/maxSize;
+			int itemY = y + height* (val-min) / (max-min);
+			printf("B do stoi(%s)[%d] x=%d\n",data[i].c_str(),i,itemX);
+			point2f np;
+			np.assign(itemX,itemY);
+			points.push_back(np);
+		}	
 	}
 
 	void draw()
