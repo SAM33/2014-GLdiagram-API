@@ -39,6 +39,7 @@ void infoReceiver :: sync()
 	{
 		int col = it.first;
 		it.second->insert( it.second->begin()+it.second->size() , tempData[col].begin() , tempData[col].end() );
+		tempData[col].clear();
 		while( it.second->size() > maxSize[col] )
 			it.second->pop_front();
 	}
