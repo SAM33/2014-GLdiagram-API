@@ -9,13 +9,13 @@ int infoReceiver::updateInfo( string str )
 {
 	if( str.empty() ) return 1;
 
-	buffer += str;
+	buffer += str;//將字串與上次切剩下的字串合併
 
 	while(1)
 	{
 		try { 
-			string res = tryCutString(buffer, '\n');
-			lines.push_back(res);
+			string res = tryCutString(buffer, '\n');  //把buffer中'\n'之前的字串切下來,且從buffer中除去
+			lines.push_back(res);  //把切好的一行字串塞入lines deque
 		} catch ( ... ) { break; }
 	}
 
