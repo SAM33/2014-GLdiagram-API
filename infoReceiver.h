@@ -23,7 +23,7 @@ public:
 	infoReceiver();
 	int updateInfo(string);
 	void registerItem(deque<string>*,int col,int max);
-	void sync();
+	int sync();
 
 	vector<string> getColumns();
 

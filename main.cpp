@@ -22,6 +22,7 @@
 #include <pthread.h>
 #include "infoReceiver.h"
 #include "diagram2.h"
+#define MS 1000
 
 void error(const char *msg)
 {
@@ -105,7 +106,7 @@ void* run(void* Diagram)
 		if (n < 0) error("ERROR reading from socket");
 		string tmp( buffer , buffer+n );
 		r.updateInfo(tmp);
-		r.sync();
+		int addedItemNum = r.sync();
 		printf("===================================================\n");
 		printf("data.size=%lu\n", data.size());
 		for( int i = 0 ; i < data.size() ; ++i )
@@ -114,7 +115,10 @@ void* run(void* Diagram)
 		}	
 		printf("===================================================\n");
 		pthread_mutex_unlock(&mutex);
-		usleep(50000);
+		if( addedItemNum == 0 )
+			usleep(200*MS);
+		else
+			usleep(800*MS);
 	}
 
 	close(newsockfd);

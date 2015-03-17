@@ -33,12 +33,15 @@ void infoReceiver :: registerItem( deque<string> *que ,int col ,int max )
 	monitorVec[col] = que;
 }
 
-void infoReceiver :: sync()
+int infoReceiver :: sync()
 {
+	int items = 0;
 	for( auto it : monitorVec )
 	{
 		int col = it.first;
-		it.second->insert( it.second->begin()+it.second->size() , tempData[col].begin() , tempData[col].end() );
+		items += tempData[col].size();
+		it.second->insert( it.second->begin()+it.second->size() 
+						, tempData[col].begin() , tempData[col].end() );
 		tempData[col].clear();
 		while( it.second->size() > maxSize[col] )
 			it.second->pop_front();
